@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert'; // For JSON decoding
 
 class ManageBusesPage extends StatefulWidget {
+  const ManageBusesPage({super.key});
+
   @override
   _ManageBusesPageState createState() => _ManageBusesPageState();
 }
@@ -19,8 +21,8 @@ class _ManageBusesPageState extends State<ManageBusesPage> {
   }
 
   Future<void> fetchBuses() async {
-    final response =
-        await http.get(Uri.parse('http://localhost/bus_tracker/get_buses.php'));
+    final response = await http
+        .get(Uri.parse('http://192.168.56.1/bus_tracker/get_buses.php'));
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
@@ -40,14 +42,14 @@ class _ManageBusesPageState extends State<ManageBusesPage> {
   // Build Bus Tile
   Widget buildBusTile(Map<String, dynamic> bus) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       elevation: 5,
       child: ListTile(
-        leading: Icon(Icons.bus_alert),
+        leading: const Icon(Icons.bus_alert),
         title: Text(bus['name']),
         subtitle:
             Text('Plate: ${bus['license_plate']} - Status: ${bus['status']}'),
-        trailing: Icon(Icons.arrow_forward_ios),
+        trailing: const Icon(Icons.arrow_forward_ios),
         onTap: () {
           // Handle bus tap (view details, last trip, etc.)
         },
@@ -59,11 +61,12 @@ class _ManageBusesPageState extends State<ManageBusesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Manage Buses'),
-        backgroundColor: Color(0xFF16501d), // Dark Green
+        title: const Text('Manage Buses'),
+        backgroundColor: const Color(0xFF16501d), // Dark Green
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator()) // Show loading spinner
+          ? const Center(
+              child: CircularProgressIndicator()) // Show loading spinner
           : ListView.builder(
               itemCount: buses.length,
               itemBuilder: (context, index) {
@@ -73,11 +76,12 @@ class _ManageBusesPageState extends State<ManageBusesPage> {
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          print("Tapped");
           Navigator.pushNamed(context, '/addBus');
         },
-        child: Icon(Icons.add),
-        backgroundColor: Color(0xFF16501d),
+        backgroundColor: const Color(0xFF16501d),
         tooltip: 'Add New Bus',
+        child: Icon(Icons.add),
       ),
     );
   }

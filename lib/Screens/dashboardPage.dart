@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:bus_tracker_admin_app/Screens/manage_buses_page.dart';
 
 class DashboardPage extends StatefulWidget {
+  const DashboardPage({super.key});
+
   @override
   _DashboardPageState createState() => _DashboardPageState();
 }
@@ -43,11 +44,39 @@ class _DashboardPageState extends State<DashboardPage> {
     Future.delayed(const Duration(seconds: 1), updateDateTime);
   }
 
-  // Logout logic
-  void logout() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear(); // Clear all stored data
-    Navigator.pushReplacementNamed(context, '/login'); // Navigate to login page
+// Logout logic
+  void logout(BuildContext context) async {
+    final bool confirmLogout = await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Logout Confirmation'),
+              content: const Text('Are you sure you want to log out?'),
+              actions: [
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop(false); // Return false
+                  },
+                ),
+                TextButton(
+                  child: const Text('Logout'),
+                  onPressed: () {
+                    Navigator.of(context).pop(true); // Return true
+                  },
+                ),
+              ],
+            );
+          },
+        ) ??
+        false; // Default to false if the dialog is dismissed.
+
+    if (confirmLogout) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.clear(); // Clear all stored data
+      Navigator.pushReplacementNamed(
+          context, '/login'); // Navigate to login page
+    }
   }
 
   @override
@@ -56,6 +85,7 @@ class _DashboardPageState extends State<DashboardPage> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF16501d), // Dark green
         title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Spacer(),
             Text(
@@ -67,20 +97,23 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
             const Spacer(),
             Text(
-              "স্বাগতম, $adminName!",
+              "Welcome, $adminName!",
               style: const TextStyle(
                 fontSize: 18.0,
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const Icon(
-              Icons.logout,
-              size: 30.0,
-              color: Colors.white,
-            ),
           ],
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.white),
+            onPressed: () {
+              logout(context); // Trigger the logout logic
+            },
+          ),
+        ],
         leading: Builder(
           builder: (context) => IconButton(
             icon: const Icon(
@@ -198,11 +231,12 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildDashboardButton(
-      {required IconData icon,
-      required String label,
-      required VoidCallback onPressed}) {
-    return GestureDetector(
+  Widget _buildDashboardButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+  }) {
+    return InkWell(
       onTap: onPressed,
       child: Container(
         decoration: BoxDecoration(

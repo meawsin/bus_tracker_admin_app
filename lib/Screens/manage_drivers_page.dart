@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ManageDriversPage extends StatelessWidget {
+  const ManageDriversPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -11,7 +13,7 @@ class ManageDriversPage extends StatelessWidget {
           children: [
             const Text(
               'Manage Drivers',
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
