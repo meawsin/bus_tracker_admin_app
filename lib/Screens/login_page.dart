@@ -49,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
 
           return Center(
             child: SingleChildScrollView(
-              child: Container(
+              child: SizedBox(
                 width: maxWidth, // Responsive width
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -80,6 +80,12 @@ class _LoginPageState extends State<LoginPage> {
                           borderSide: BorderSide(color: Color(0xFF16501d)),
                         ),
                       ),
+                      textInputAction:
+                          TextInputAction.next, // Move to next field
+                      onSubmitted: (_) {
+                        FocusScope.of(context)
+                            .nextFocus(); // Focus the next field
+                      },
                     ),
                     const SizedBox(height: 20),
 
@@ -99,6 +105,10 @@ class _LoginPageState extends State<LoginPage> {
                           borderSide: BorderSide(color: Color(0xFF16501d)),
                         ),
                       ),
+                      textInputAction: TextInputAction.done, // Submit form
+                      onSubmitted: (_) {
+                        _login(); // Trigger login action
+                      },
                     ),
                     const SizedBox(height: 20),
 
@@ -111,17 +121,16 @@ class _LoginPageState extends State<LoginPage> {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                         padding: const EdgeInsets.symmetric(vertical: 15.0),
-                        textStyle: const TextStyle(
-                          color: Colors.white, // Text color set to white
-                        ),
                       ),
                       child: const Text(
                         'Login',
                         style: TextStyle(
-                            fontSize: 18.0, fontWeight: FontWeight.bold),
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white, // Text color set to plain white
+                        ),
                       ),
                     ),
-
                     // Error Message
                     if (errorMessage.isNotEmpty)
                       Padding(

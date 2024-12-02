@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:bus_tracker_admin_app/Widgets/CustomAppBar.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -44,7 +45,7 @@ class _DashboardPageState extends State<DashboardPage> {
     Future.delayed(const Duration(seconds: 1), updateDateTime);
   }
 
-// Logout logic
+  // Logout logic
   void logout(BuildContext context) async {
     final bool confirmLogout = await showDialog<bool>(
           context: context,
@@ -82,50 +83,10 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF16501d), // Dark green
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Spacer(),
-            Text(
-              currentDateTime,
-              style: const TextStyle(
-                fontSize: 18.0,
-                color: Colors.white,
-              ),
-            ),
-            const Spacer(),
-            Text(
-              "Welcome, $adminName!",
-              style: const TextStyle(
-                fontSize: 18.0,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout, color: Colors.white),
-            onPressed: () {
-              logout(context); // Trigger the logout logic
-            },
-          ),
-        ],
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(
-              Icons.menu, // Replace this with your desired icon
-              size: 28.0,
-              color: Colors.white, // Icon color
-            ),
-            onPressed: () {
-              Scaffold.of(context).openDrawer(); // Opens the drawer
-            },
-          ),
-        ),
+      appBar: CustomAppBar(
+        adminName: adminName,
+        currentDateTime: currentDateTime,
+        onLogoutPressed: () => logout(context),
       ),
       drawer: Drawer(
         child: ListView(

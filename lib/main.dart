@@ -29,14 +29,14 @@ class AdminDashboardApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Admin Dashboard',
       routes: {
-        '/dashboard': (context) => DashboardPage(),
-        '/manageBuses': (context) => ManageBusesPage(),
-        '/manageDrivers': (context) => ManageDriversPage(),
-        '/setTrips': (context) => SetTripsPage(),
+        '/dashboard': (context) => const DashboardPage(),
+        '/manageBuses': (context) => const ManageBusesPage(),
+        '/manageDrivers': (context) => const ManageDriversPage(),
+        '/setTrips': (context) => const SetTripsPage(),
         // '/routes': (context) => RoutesPage(),
         // '/stats': (context) => StatsPage(),
         //'/complaints': (context) => ComplaintsPage(),
-        '/login': (context) => LoginPage(),
+        '/login': (context) => const LoginPage(),
       },
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -50,7 +50,7 @@ class AdminDashboardApp extends StatelessWidget {
           }
           if (snapshot.hasData && snapshot.data == true) {
             // User is logged in, go to Dashboard
-            return DashboardPage();
+            return const DashboardPage();
           } else {
             // User is not logged in, go to Login Page
             return const LoginPage();
