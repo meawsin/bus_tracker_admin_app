@@ -1,3 +1,4 @@
+import 'package:bus_tracker_admin_app/Screens/ComplaintPage.dart';
 import 'package:bus_tracker_admin_app/Screens/dashboardPage.dart';
 import 'package:bus_tracker_admin_app/Screens/login_page.dart';
 import 'package:bus_tracker_admin_app/Screens/manage_buses_page.dart';
@@ -35,7 +36,7 @@ class AdminDashboardApp extends StatelessWidget {
         '/setTrips': (context) => const SetTripsPage(),
         // '/routes': (context) => RoutesPage(),
         // '/stats': (context) => StatsPage(),
-        //'/complaints': (context) => ComplaintsPage(),
+        '/complaints': (context) => ComplaintsPage(),
         '/login': (context) => const LoginPage(),
       },
       theme: ThemeData(

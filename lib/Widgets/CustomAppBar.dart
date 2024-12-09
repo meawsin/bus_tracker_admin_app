@@ -6,11 +6,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback onLogoutPressed;
 
   const CustomAppBar({
-    Key? key,
+    super.key,
     required this.adminName,
     required this.currentDateTime,
     required this.onLogoutPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

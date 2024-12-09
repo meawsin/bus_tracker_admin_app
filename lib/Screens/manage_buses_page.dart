@@ -83,7 +83,8 @@ class _ManageBusesPageState extends State<ManageBusesPage> {
   void onAddBusPressed(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => AddEditBusPage(isEditing: false)),
+      MaterialPageRoute(
+          builder: (context) => const AddEditBusPage(isEditing: false)),
     );
   }
 

@@ -11,8 +11,8 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  String adminName = "Admin"; // Default admin name
-  String currentDateTime = ""; // To store formatted date & time
+  String adminName = "Admin";
+  String currentDateTime = "";
 
   @override
   void initState() {
@@ -21,31 +21,143 @@ class _DashboardPageState extends State<DashboardPage> {
     updateDateTime();
   }
 
-  // Fetch the admin name (simulate login info or from SharedPreferences)
   void fetchAdminName() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      adminName =
-          prefs.getString('adminName') ?? "Admin"; // Use stored name or default
+      adminName = prefs.getString('adminName') ?? "Admin";
     });
   }
 
-  // Update Bangla date and time
   void updateDateTime() {
     setState(() {
       final now = DateTime.now();
       final banglaDateFormatter = DateFormat("dd MMMM yyyy", "bn_BD");
       final banglaTimeFormatter = DateFormat("h:mm:ss a", "bn_BD");
-
       currentDateTime =
           "${banglaDateFormatter.format(now)} | ${banglaTimeFormatter.format(now)}";
     });
 
-    // Update every second for real-time clock
     Future.delayed(const Duration(seconds: 1), updateDateTime);
   }
 
-  // Logout logic
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: CustomAppBar(
+        adminName: adminName,
+        currentDateTime: currentDateTime,
+        onLogoutPressed: () => logout(context),
+      ),
+      drawer: _buildDrawer(context),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.pushNamed(context, '/setTrips');
+              },
+              icon: const Icon(Icons.add),
+              label: const Text("Assign a Trip"),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Color.fromARGB(255, 4, 54, 19)),
+            ),
+            GridView.count(
+              crossAxisCount: 2,
+              crossAxisSpacing: 10.0,
+              mainAxisSpacing: 15.0,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              childAspectRatio: 2.5,
+              children: [
+                _buildStatCard("On Route Buses", "5", Icons.directions_bus),
+                _buildStatCard("Today's Trips", "12", Icons.schedule),
+                _buildStatCard("Free Drivers", "8", Icons.person_outline),
+                _buildStatCard("Free Buses", "3", Icons.directions_bus_filled),
+              ],
+            ),
+            const SizedBox(height: 20),
+            ListTile(
+              leading: const Icon(Icons.feedback),
+              title: const Text('Complaints'),
+              trailing: const Icon(Icons.arrow_forward),
+              onTap: () => Navigator.pushNamed(context, '/Complaints'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatCard(String title, String value, IconData icon) {
+    return Card(
+      color: Colors.lightGreen[100],
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 40, color: Colors.green),
+            const SizedBox(height: 8),
+            Text(title,
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(value,
+                style: const TextStyle(fontSize: 24, color: Colors.green)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDrawer(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        children: [
+          const DrawerHeader(
+            decoration: BoxDecoration(color: Colors.green),
+            child: Text(
+              'Admin Panel',
+              style: TextStyle(color: Colors.white, fontSize: 24),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.dashboard),
+            title: const Text('Dashboard'),
+            onTap: () => Navigator.pushNamed(context, '/dashboard'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.directions_bus),
+            title: const Text('Buses'),
+            onTap: () => Navigator.pushNamed(context, '/buses'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.person),
+            title: const Text('Drivers'),
+            onTap: () => Navigator.pushNamed(context, '/drivers'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.route),
+            title: const Text('Routes'),
+            onTap: () => Navigator.pushNamed(context, '/routes'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.feedback),
+            title: const Text('Complaints'),
+            trailing: const Icon(Icons.arrow_forward),
+            onTap: () {
+              debugPrint("Complaints button clicked");
+              Navigator.pushNamed(context, '/complaints');
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   void logout(BuildContext context) async {
     final bool confirmLogout = await showDialog<bool>(
           context: context,
@@ -57,171 +169,25 @@ class _DashboardPageState extends State<DashboardPage> {
                 TextButton(
                   child: const Text('Cancel'),
                   onPressed: () {
-                    Navigator.of(context).pop(false); // Return false
+                    Navigator.of(context).pop(false);
                   },
                 ),
                 TextButton(
                   child: const Text('Logout'),
                   onPressed: () {
-                    Navigator.of(context).pop(true); // Return true
+                    Navigator.of(context).pop(true);
                   },
                 ),
               ],
             );
           },
         ) ??
-        false; // Default to false if the dialog is dismissed.
+        false;
 
     if (confirmLogout) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.clear(); // Clear all stored data
-      Navigator.pushReplacementNamed(
-          context, '/login'); // Navigate to login page
+      await prefs.clear();
+      Navigator.pushReplacementNamed(context, '/login');
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        adminName: adminName,
-        currentDateTime: currentDateTime,
-        onLogoutPressed: () => logout(context),
-      ),
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.bus_alert),
-              title: const Text('Manage Buses'),
-              onTap: () {
-                Navigator.pushNamed(context, '/manageBuses');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text('Manage Drivers'),
-              onTap: () {
-                Navigator.pushNamed(context, '/manageDrivers');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.schedule),
-              title: const Text('Set Trips'),
-              onTap: () {
-                Navigator.pushNamed(context, '/setTrips');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.map),
-              title: const Text('Routes'),
-              onTap: () {
-                Navigator.pushNamed(context, '/routes');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.bar_chart),
-              title: const Text('Stats'),
-              onTap: () {
-                Navigator.pushNamed(context, '/stats');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.feedback),
-              title: const Text('Complaints'),
-              onTap: () {
-                Navigator.pushNamed(context, '/complaints');
-              },
-            ),
-          ],
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: GridView.count(
-          crossAxisCount: 6, // Display 3 buttons per row
-          crossAxisSpacing: 10.0, // Reduced spacing between buttons
-          mainAxisSpacing: 15.0,
-          childAspectRatio: 1.2, // Adjust the height-to-width ratio
-          children: [
-            _buildDashboardButton(
-              icon: Icons.bus_alert,
-              label: "Manage Buses",
-              onPressed: () {
-                Navigator.pushNamed(context, '/manageBuses');
-              },
-            ),
-            _buildDashboardButton(
-              icon: Icons.person,
-              label: "Manage Drivers",
-              onPressed: () {
-                Navigator.pushNamed(context, '/manageDrivers');
-              },
-            ),
-            _buildDashboardButton(
-              icon: Icons.schedule,
-              label: "Set Trips",
-              onPressed: () {
-                Navigator.pushNamed(context, '/setTrips');
-              },
-            ),
-            _buildDashboardButton(
-              icon: Icons.map,
-              label: "Routes",
-              onPressed: () {
-                Navigator.pushNamed(context, '/routes');
-              },
-            ),
-            _buildDashboardButton(
-              icon: Icons.bar_chart,
-              label: "Stats",
-              onPressed: () {
-                Navigator.pushNamed(context, '/stats');
-              },
-            ),
-            _buildDashboardButton(
-              icon: Icons.feedback,
-              label: "Complaints",
-              onPressed: () {
-                Navigator.pushNamed(context, '/complaints');
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDashboardButton({
-    required IconData icon,
-    required String label,
-    required VoidCallback onPressed,
-  }) {
-    return InkWell(
-      onTap: onPressed,
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFFd7e8dc), // Light green
-          borderRadius: BorderRadius.circular(12.0),
-          border: Border.all(color: const Color(0xFF16501d)),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 40.0, color: const Color(0xFF16501d)),
-            const SizedBox(height: 10.0),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF16501d),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
